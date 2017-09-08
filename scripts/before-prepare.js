@@ -13,15 +13,17 @@ fs.readFile(path.resolve(process.cwd(), 'config.xml'), function(err, data) {
       return console.log(PLUGIN_NAME, " ERROR: ", err);
     }
     var plugins = result.widget.plugin;
-    for (var n=0,len=plugins.length;n<len;n++) {
-      var plugin = plugins[n];
-      if (plugin.$.name === PLUGIN_NAME) {
-        if (!plugin.variable.length) { 
-          return console.log(PLUGIN_NAME, ' ERROR: FAILED TO FIND <variable name="PLAY_SERVICES_VERSION" /> in config.xml');
+    if (plugins) {
+      for (var n=0,len=plugins.length;n<len;n++) {
+        var plugin = plugins[n];
+        if (plugin.$.name === PLUGIN_NAME) {
+          if (!plugin.variable.length) { 
+            return console.log(PLUGIN_NAME, ' ERROR: FAILED TO FIND <variable name="PLAY_SERVICES_VERSION" /> in config.xml');
+          }
+          // 2.  Update .gradle file.
+          setGradleVersion(plugin.variable.pop().$.value);
+          break;
         }
-        // 2.  Update .gradle file.
-        setGradleVersion(plugin.variable.pop().$.value);
-        break;
       }
     }
   });
